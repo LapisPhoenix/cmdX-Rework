@@ -1,9 +1,9 @@
-from utils.tools import OperatingSystem, progress_bar
+from utils.tools import System, progress_bar
+import os
 import CONSTANTS
 
-os = OperatingSystem()
+sys = System()
 
-#TODO: Transfer all commands into Commands class (E.G: os.cls)
 
 class Terminal:
     def __init__(self):
@@ -14,43 +14,70 @@ class Terminal:
             pass
 
         def __iter__(self):
-            for command in self.__dir__:
+            for command in self.__dir__:  # type:ignore
                 yield command
 
         def help(self):
             """The basic help command!"""
-            print("Loading Help...")
-            i = 0
             msg = f"""\n\nhelp
 {'-' * 50}\n"""
 
             for callable in Terminal.Commands.__dict__:
-                i += 1
-                progress_bar(i, Terminal.Commands.__dict__.__len__())
-                
                 if callable.startswith("__"):
                     continue
-                
+
                 function = Terminal.Commands.__dict__[callable]
                 doc = function.__doc__
                 if doc:
                     msg += f"{callable.lower()}{' ' * (CONSTANTS.spacer - len(callable))}{doc}\n"
                 else:
                     msg += f"{callable.lower()}{' '* (CONSTANTS.spacer - len(callable))}No documentation given.\n"
-            
+
             print(msg)
 
         def hello(self):
             """Says hello to you."""
-            print(f"Hi {os.username()}!")
-        
+            print(f"Hi {os.getlogin()}!")
+
         def test(self):
             """Test Command for text output"""
             print("Test")
-        
+
         def cls(self):
             """Clears the console"""
-            os.do_sys("cls" if os._system == "Windows" else "clear")
+            os.system("cls" if sys._system == "Windows" else "clear")
+
+        def cat(self, file):
+            """Reads a file."""
+            with open(file, "r") as f:
+                return print(f.read())
+
+        def ls(self, directory=None):
+            """List all items inside a directory."""
+            msg = ""
+
+            if directory is None:
+                directory = os.getcwd()
+
+            items = os.listdir(directory)
+            max_item_len = max([len(item) for item in items])
+            for item in items:
+                item_path = os.path.join(directory, item)
+                msg += f"{item}{' ' * (max_item_len - len(item) + CONSTANTS.spacer)}"
+
+                try:
+                    if os.path.isfile(item_path):
+                        item_size = os.path.getsize(item_path)
+                        if item_size > 0:
+                            msg += f"{item_size}b\n"
+                        else:
+                            msg += "N/A\n"
+                    elif os.path.isdir(item_path):
+                        msg += "N/A\n"
+                except Exception:
+                    msg += "N/A\n"
+
+            print(msg)
 
         def close(self):
             """Exits the console."""

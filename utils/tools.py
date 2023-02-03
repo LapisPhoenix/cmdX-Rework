@@ -64,18 +64,9 @@ class Settings:
             return dict(file_contents)
 
 
-class OperatingSystem:
+class System:
     def __init__(self):
         self._system = platform.system()
-    
-    def current_working_directory(self) -> str:
-        return str(os.getcwd())
-    
-    def username(self) -> str:
-        return os.getlogin()
-    
-    def do_sys(self, command):
-        os.system(command)
 
 def progress_bar(progress: int, total: float):
     """
