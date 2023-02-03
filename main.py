@@ -5,7 +5,7 @@ from colorama import Fore, init
 settings = Settings("settings.json")
 os = OperatingSystem()
 
-div = settings.load_data().get("profile", {}).get("div", ">>")
+div = settings.load_data().get("profile", {}).get("div")
 term = Terminal()
 cmd = term.Commands()
 
