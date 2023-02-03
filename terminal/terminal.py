@@ -13,11 +13,12 @@ class Terminal:
         def __init__(self):
             pass
 
-        def hello(self):
-            """Says hello to you."""
-            print(f"Hi {os.username()}!")
-        
+        def __iter__(self):
+            for command in self.__dir__:
+                yield command
+
         def help(self):
+            """The basic help command!"""
             print("Loading Help...")
             i = 0
             msg = f"""\n\nhelp
@@ -27,9 +28,25 @@ class Terminal:
                 i += 1
                 progress_bar(i, Terminal.Commands.__dict__.__len__())
                 
-                msg.join(f"{callable.lower()} {' ' * (50 - len(callable))}{callable.__doc__}")
+                if callable.startswith("__"):
+                    continue
+                
+                function = Terminal.Commands.__dict__[callable]
+                doc = function.__doc__
+                if doc:
+                    msg += f"{callable.lower()}{' ' * (30 - len(callable))}{doc}\n"
+                else:
+                    msg += f"{callable.lower()}{' '* (30 - len(callable))}No documentation given.\n"
             
             print(msg)
+
+        def hello(self):
+            """Says hello to you."""
+            print(f"Hi {os.username()}!")
+        
+        def test(self):
+            """Test Command for text output"""
+            print("Test")
 
         def close(self):
             """Exits the console."""
