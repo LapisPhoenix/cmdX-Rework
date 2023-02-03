@@ -1,8 +1,8 @@
 from utils.tools import OperatingSystem, progress_bar
+import CONSTANTS
 
 os = OperatingSystem()
 
-#TODO: Add a loop in the help command to automate the help command
 #TODO: Transfer all commands into Commands class (E.G: os.cls)
 
 class Terminal:
@@ -34,9 +34,9 @@ class Terminal:
                 function = Terminal.Commands.__dict__[callable]
                 doc = function.__doc__
                 if doc:
-                    msg += f"{callable.lower()}{' ' * (30 - len(callable))}{doc}\n"
+                    msg += f"{callable.lower()}{' ' * (CONSTANTS.spacer - len(callable))}{doc}\n"
                 else:
-                    msg += f"{callable.lower()}{' '* (30 - len(callable))}No documentation given.\n"
+                    msg += f"{callable.lower()}{' '* (CONSTANTS.spacer - len(callable))}No documentation given.\n"
             
             print(msg)
 
@@ -47,6 +47,10 @@ class Terminal:
         def test(self):
             """Test Command for text output"""
             print("Test")
+        
+        def cls(self):
+            """Clears the console"""
+            os.do_sys("cls" if os._system == "Windows" else "clear")
 
         def close(self):
             """Exits the console."""
