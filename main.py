@@ -10,6 +10,10 @@ div = settings.load_data().get("profile", {}).get("div")
 term = Terminal()
 cmd = term.Commands()
 
+# Extra commands that run the same thing are aliases
+# Aliases are not listed inside the help command
+# But can always be used
+
 commands = {
     'cls': cmd.cls,
     'clear': cmd.cls,
@@ -23,21 +27,51 @@ commands = {
     'cat': cmd.cat,
     'read': cmd.cat,
     'ls': cmd.ls,
-    'dir': cmd.ls
+    'dir': cmd.ls,
+    'run': cmd.run,
+    'call': cmd.run,
+    'exec': cmd.run,
+    'echo': cmd.say,
+    'back': cmd.say,
+    'say': cmd.say,
+    'findstr': cmd.findstr,
+    'fstr': cmd.findstr,
+    'cd': cmd.cd,
+    'move': cmd.cd
 }
 
 def main():
     print(f"cmdX V2.0\nCopyright (c) 2023 Lapis Pheonix")
     while True:
-        line = input(f"{os.getcwd() + div} ").casefold() #type: ignore
-        parts = line.split(" ", maxsplit=1)
-        command = commands.get(parts[0])
-        arguments = parts[1] if len(parts) > 1 else None
-        if command:
-            if arguments:
-                command(arguments)
+        line = input(str(os.getcwd()) + str(div))   # User input
+        arguments = []
+        current_argument = ""
+        in_quotes = False
+        for char in line:
+            if char == " " and not in_quotes:   # Check if its just a space
+                if current_argument:    # Check if the current arg is True/not empty
+                    arguments.append(current_argument)
+                    current_argument = ""
+            # Check if its inside quotes
+            elif char == '"':
+                in_quotes = not in_quotes
+            elif char == "'":
+                in_quotes = not in_quotes
             else:
-                command()
+                current_argument += char
+        # Check again
+        if current_argument:
+            arguments.append(current_argument)
+        # Check the command in lowercase while keeping the original arguments
+        command = commands.get(arguments[0].lower())
+        # Get the original Arguments with case kept
+        # We do this extra check lower case check of the command
+        # Because we need to check if the command is valid
+        # While keeping the original case of the arugments
+        # This also adds the plus side of having commands be case-insensitive
+        arguments = arguments[1:]
+        if command:
+            command(*arguments)
         else:
             print("Invalid Command!\nTry: help")
 

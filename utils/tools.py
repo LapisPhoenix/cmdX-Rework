@@ -1,4 +1,3 @@
-import os
 import platform
 
 from json import dump, load, JSONDecodeError
